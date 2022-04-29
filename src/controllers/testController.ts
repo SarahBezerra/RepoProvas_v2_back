@@ -12,6 +12,18 @@ async function find(req: Request, res: Response) {
   res.send({ tests });
 }
 
+async function addView(req: Request, res: Response) {
+  const { user } = res.locals;
+  const { testId } = req.params;
+
+  if(!user || !testId || +(testId) === NaN){
+    return res.sendStatus(400);
+  }
+
+  await testService.addView({userId: user.id, testId: Number(testId)});
+}
+
 export default {
   find,
+  addView,
 };

@@ -1,5 +1,13 @@
 import { prisma } from "../database.js";
 
+async function findTestById(testId: number) {
+  return prisma.test.findMany({
+    where: {
+      id: testId
+    }
+  });
+}
+
 async function getTestsByDiscipline() {
   return prisma.term.findMany({
     include: {
@@ -11,6 +19,7 @@ async function getTestsByDiscipline() {
               tests: {
                 include: {
                   category: true,
+                  testView: true,
                 },
               },
             },
@@ -38,6 +47,7 @@ async function getTestsByFilteredDiscipline(filterDiscipline: string) {
               tests: {
                 include: {
                   category: true,
+                  testView: true,
                 },
               },
             },
@@ -56,6 +66,7 @@ async function getTestsByTeachers() {
       tests: {
         include: {
           category: true,
+          testView: true,
         },
       },
     },
@@ -78,15 +89,42 @@ async function getTestsByFilteredTeachers(filterTeacher: string) {
       tests: {
         include: {
           category: true,
+          testView: true,
         },
       },
     },
   });
 }
 
+export interface ViewTest {
+  userId: number,
+  testId: number,
+}
+
+async function findTestView({ userId, testId }: ViewTest) {
+  return prisma.testViews.findFirst({
+    where: {
+      testId,
+      userId
+    }
+  });
+}
+
+async function insertTestView({ userId, testId }: ViewTest) {
+  return prisma.testViews.create({
+    data: {
+      userId,
+      testId
+    }
+  });
+}
+
 export default {
+  findTestById,
   getTestsByDiscipline,
   getTestsByFilteredDiscipline,
   getTestsByTeachers,
   getTestsByFilteredTeachers,
+  findTestView,
+  insertTestView,
 };
