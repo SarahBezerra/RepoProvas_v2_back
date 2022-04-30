@@ -1,3 +1,4 @@
+import { CreateTest } from "../services/testService.js";
 import { prisma } from "../database.js";
 
 async function findTestById(testId: number) {
@@ -119,6 +120,17 @@ async function insertTestView({ userId, testId }: ViewTest) {
   });
 }
 
+async function createTest({ name, pdfUrl, categoryId, teacherDisciplineId }: CreateTest) {
+  return prisma.test.create({
+    data: {
+      name,
+      pdfUrl,
+      categoryId,
+      teacherDisciplineId,
+    }
+  });
+}
+
 export default {
   findTestById,
   getTestsByDiscipline,
@@ -127,4 +139,5 @@ export default {
   getTestsByFilteredTeachers,
   findTestView,
   insertTestView,
+  createTest,
 };

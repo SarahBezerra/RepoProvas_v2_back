@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import testService from "../services/testService.js";
+import { badRequestError } from "../utils/errorUtils.js";
 
 async function find(req: Request, res: Response) {
   const { groupBy, filterDiscipline, filterTeacher } = req.query as { groupBy: string, filterDiscipline: string, filterTeacher: string };
@@ -23,7 +24,16 @@ async function addView(req: Request, res: Response) {
   await testService.addView({userId: user.id, testId: Number(testId)});
 }
 
+async function createTest(req: Request, res: Response) {
+  const test = req.body;
+  if (!test) throw badRequestError("Invalid Test");
+  await testService.createTest(test);
+
+  res.sendStatus(201);
+}
+
 export default {
   find,
   addView,
+  createTest,
 };
