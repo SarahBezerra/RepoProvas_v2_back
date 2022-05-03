@@ -1,6 +1,6 @@
 import testRepository from "../repositories/testRepository.js";
 import userRepository from '../repositories/userRepository.js';
-import { ViewTest } from '../repositories/testRepository.js';
+import { createViewTest, CreateTest } from '../repositories/testRepository.js';
 import { notFoundError, conflictError } from '../utils/errorUtils.js';
 import categoryRepository from "../repositories/categoryRepository.js";
 import teacherRepository from "../repositories/teacherRepository.js";
@@ -28,7 +28,7 @@ async function find(filter: Filter) {
   }
 }
 
-async function addView({ userId, testId }: ViewTest) {
+async function addView({ userId, testId }: createViewTest) {
   const user = await userRepository.findById(userId);
   if (!user) throw notFoundError("User not found");
 
@@ -49,13 +49,6 @@ export interface Test {
   testTitle: string,
 }
 
-export interface CreateTest {
-  name: string,
-  pdfUrl: string,
-  categoryId: number,
-  teacherDisciplineId: number,
-}
-
 async function createTest(test: Test) {
   const category = await categoryRepository.findByName(test.category);
   if (!category) throw notFoundError("Category not found");
@@ -69,7 +62,7 @@ async function createTest(test: Test) {
   const teacherDiscipline = await teacherRepository.findTeacherDiscipline(teacher.id, discipline.id);
   if (!teacherDiscipline) throw notFoundError("TeacherDiscipline not found");
 
-  const testData = {
+  const testData: CreateTest = {
     name: test.testTitle, 
     pdfUrl: test.testPdf, 
     categoryId: category.id, 

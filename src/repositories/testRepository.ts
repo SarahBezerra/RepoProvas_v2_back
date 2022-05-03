@@ -1,5 +1,8 @@
-import { CreateTest } from "../services/testService.js";
 import { prisma } from "../database.js";
+import { Test, TestViews} from "@prisma/client";
+
+export type CreateTest = Omit<Test, "id">;
+export type createViewTest = Omit<TestViews, "id">;
 
 async function findTestById(testId: number) {
   return prisma.test.findMany({
@@ -97,12 +100,8 @@ async function getTestsByFilteredTeachers(filterTeacher: string) {
   });
 }
 
-export interface ViewTest {
-  userId: number,
-  testId: number,
-}
 
-async function findTestView({ userId, testId }: ViewTest) {
+async function findTestView({ userId, testId }: createViewTest) {
   return prisma.testViews.findFirst({
     where: {
       testId,
@@ -111,7 +110,7 @@ async function findTestView({ userId, testId }: ViewTest) {
   });
 }
 
-async function insertTestView({ userId, testId }: ViewTest) {
+async function insertTestView({ userId, testId }: createViewTest) {
   return prisma.testViews.create({
     data: {
       userId,
